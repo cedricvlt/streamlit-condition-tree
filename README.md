@@ -1,7 +1,9 @@
 
 Based on [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder)
 
-Check out [live demo](https://app-condition-tree-demo-dkclrsnqxpcgzkjzlv3mqu.streamlit.app/) !
+Check out [live demo](https://condition-tree-demo.streamlit.app/) !
+
+This component allows users to build complex condition trees that can be used, for example, to filter a dataframe or build a query.
 
 <img src="preview.jpg" width="500" alt="preview">
 
@@ -43,17 +45,15 @@ config = {
             'type': 'text',
         },
         'qty': {
-            'label': "Age",
-            'type': "number",
+            'label': 'Age',
+            'type': 'number',
             'fieldSettings': {
                 'min': 0
             },
-            'preferWidgets': ['number']
         },
         'like_tomatoes': {
             'label': 'Likes tomatoes',
-            'type': "boolean",
-            'operators': ["equal"],
+            'type': 'boolean',
         }
     }
 }
@@ -93,22 +93,37 @@ def condition_tree(
   - spel
   - elasticSearch
   - jsonLogic
+    
+  Default : queryString
 
 
 - **tree**: Input condition tree (see section below)
+  
+  Default : None
 
 
 - **min_height**: Minimum height of the component frame
+  
+  Default : 400
 
 
 - **placeholder**: Text displayed when the condition tree is empty
+  
+  Default : None
 
 
 - **key**: Fixed identity if you want to change its arguments over time and not have it be re-created.  
 Can also be used to access the generated condition tree (see section below).
+
+  Default : None
 
 
 ### Export & import a condition tree
 
 When a key is defined for the component, the condition tree generated is accessible through `st.session_state[key]` as a dictionary.  
 It can be loaded as an input tree through the `tree` parameter.
+
+
+## Potential future improvements
+- **Dataframe filtering support**: automatically build config from dataframe and return a query string adapted to `pandas.DataFrame.query`
+- **Javascript support**: allow injection of javascript code in the configuration (e.g. validators)
