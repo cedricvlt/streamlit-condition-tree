@@ -3,7 +3,7 @@ Based on [react-awesome-query-builder](https://github.com/ukrbublik/react-awesom
 
 Check out [live demo](https://condition-tree-demo.streamlit.app/) !
 
-This component allows users to build complex condition trees that can be used, for example, to filter a dataframe or build a query.
+This component allows users to build complex condition trees that can be used to filter a dataframe or build a query.
 
 <img src="preview.jpg" width="500" alt="preview">
 
@@ -33,11 +33,37 @@ This component allows users to build complex condition trees that can be used, f
 
 ## Basic usage
 
+### Filter a dataframe
+
+```python
+import pandas as pd
+from streamlit_condition_tree import condition_tree, config_from_dataframe
+
+# Initial dataframe
+df = pd.DataFrame({
+    'First Name': ['Georges', 'Alfred'],
+    'Age': [45, 98],
+    'Favorite Color': ['Green', 'Red'],
+    'Like Tomatoes': [True, False]
+})
+
+# Basic field configuration from dataframe
+config = config_from_dataframe(df)
+
+# Condition tree
+query_string = condition_tree(config)
+
+# Filtered dataframe
+df = df.query(query_string)
+```
+
+### Build a query
+
 ```python
 import streamlit as st
 from streamlit_condition_tree import condition_tree
 
-
+# Build a custom configuration
 config = {
     'fields': {
         'name': {
@@ -58,11 +84,13 @@ config = {
     }
 }
 
+# Condition tree
 return_val = condition_tree(
     config,
     return_type='sql'
 )
 
+# Generated SQL
 st.write(return_val)
 ```
 
@@ -72,18 +100,22 @@ st.write(return_val)
 
 ```python
 def condition_tree(
-    config: Dict
-    return_type: str
-    tree: Dict
-    min_height: int
-    placeholder: str
+    config: dict,
+    return_type: str,
+    tree: dict,
+    min_height: int,
+    placeholder: str,
     key: str
 )
 ```
 
-- **config**: Python dictionary that resembles the JSON counterpart of
-  the React component [config](https://github.com/ukrbublik/react-awesome-query-builder/blob/master/CONFIG.adoc).  
-*Note*: Javascript functions (ex: validators) are not yet supported.
+- **config**: Python dictionary (mostly used to define the fields) that resembles the JSON counterpart of
+  the React component.
+   
+A basic configuration can be built from a DataFrame with `config_from_dataframe`.  
+For a more advanced configuration, see the component [doc](https://github.com/ukrbublik/react-awesome-query-builder/blob/master/CONFIG.adoc)
+and [demo](https://ukrbublik.github.io/react-awesome-query-builder/).  
+  *Note*: Javascript functions (ex: validators) are not yet supported.
 
 
 - **return_type**: Format of the returned value :
@@ -92,9 +124,9 @@ def condition_tree(
   - sql
   - spel
   - elasticSearch
-  - jsonLogic
-    
-  Default : queryString
+  - jsonLogic  
+
+  Default : queryString (can be used to filter a pandas DataFrame using DataFrame.query)
 
 
 - **tree**: Input condition tree (see section below)
@@ -125,5 +157,4 @@ It can be loaded as an input tree through the `tree` parameter.
 
 
 ## Potential future improvements
-- **Dataframe filtering support**: automatically build config from dataframe and return a query string adapted to `pandas.DataFrame.query`
 - **Javascript support**: allow injection of javascript code in the configuration (e.g. validators)

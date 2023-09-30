@@ -1,6 +1,6 @@
 {
   "name": "streamlit-condition-tree",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@fontsource/source-sans-pro": "^5.0.8",

@@ -15,6 +15,43 @@ else:
     _component_func = components.declare_component("streamlit_condition_tree", path=build_dir)
 
 
+type_mapper = {
+    'b': 'boolean',
+    'i': 'number',
+    'u': 'number',
+    'f': 'number',
+    'c': '',
+    'm': '',
+    'M': 'datetime',
+    'O': 'text',
+    'S': 'text',
+    'U': 'text',
+    'V': ''
+}
+
+
+def config_from_dataframe(dataframe):
+    """Return a basic configuration from dataframe columns"""
+
+    fields = {}
+    for col_name, col_dtype in zip(dataframe.columns, dataframe.dtypes):
+        col_type = 'select' if col_dtype == 'category' else type_mapper[col_dtype.kind]
+
+        if col_type:
+            col_config = {
+                'label': col_name,
+                'type': col_type
+            }
+            if col_type == 'select':
+                categories = dataframe[col_name].cat.categories
+                col_config['fieldSettings'] = {
+                    'listValues': [{'value': c, 'title': c} for c in categories]
+                }
+            fields[f'{col_name}'] = col_config
+
+    return {'fields': fields}
+
+
 def condition_tree(config: dict,
                    return_type: str = 'queryString',
                    tree: dict = None,
@@ -32,12 +69,16 @@ def condition_tree(config: dict,
         Format in which output should be returned to streamlit.
         Possible values : queryString | mongodb | sql | spel |
         elasticSearch | jsonLogic.
+        Default : queryString (compatible with DataFrame.query)
     tree: dict or None
         Input condition tree
+        Default: None
     min_height: int
         Minimum height of the component frame
+        Default: 400
     placeholder: str
         Text displayed when the condition tree is empty
+        Default: empty
     key: str or None
         An optional key that uniquely identifies this component. If this is
         None, and the component's arguments are changed, the component will
@@ -51,6 +92,16 @@ def condition_tree(config: dict,
 
     """
 
+    if return_type == 'queryString':
+        # Add backticks to fields with space in their name
+        fields = {}
+        for field_name, field_config in config['fields'].items():
+            if ' ' in field_name:
+                field_name = f'`{field_name}`'
+            fields[field_name] = field_config
+
+        config['fields'] = fields
+
     output_tree, component_value = _component_func(
         config=config,
         return_type=return_type,
@@ -60,6 +111,11 @@ def condition_tree(config: dict,
         placeholder=placeholder,
         default=['', '']
     )
+
+    if return_type == 'queryString' and not component_value:
+        # Default string that returns all the values in DataFrame.query
+        component_value = 'index in index'
+
     st.session_state[key] = output_tree
 
     return component_value
