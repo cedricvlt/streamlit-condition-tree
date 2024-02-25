@@ -101,11 +101,12 @@ st.write(return_val)
 ```python
 def condition_tree(
     config: dict,
-    return_type: str,
-    tree: dict,
-    min_height: int,
-    placeholder: str,
-    key: str
+    return_type: str [Optional],
+    tree: dict [Optional],
+    min_height: int [Optional],
+    placeholder: str [Optional],
+    always_show_buttons: bool [Optional],
+    key: str [Optional]
 )
 ```
 
@@ -142,6 +143,11 @@ and [demo](https://ukrbublik.github.io/react-awesome-query-builder/).
 - **placeholder**: Text displayed when the condition tree is empty
   
   Default : None
+
+
+- **always_show_buttons**: Show buttons (create rule, etc.) even when they are not hovered
+
+  Default: False
 
 
 - **key**: Fixed identity if you want to change its arguments over time and not have it be re-created.  

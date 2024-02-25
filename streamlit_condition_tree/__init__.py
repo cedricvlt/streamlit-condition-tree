@@ -57,6 +57,7 @@ def condition_tree(config: dict,
                    tree: dict = None,
                    min_height: int = 400,
                    placeholder: str = '',
+                   always_show_buttons: bool = False,
                    key: str = None):
     """Create a new instance of condition_tree.
 
@@ -79,6 +80,9 @@ def condition_tree(config: dict,
     placeholder: str
         Text displayed when the condition tree is empty
         Default: empty
+    always_show_buttons: false
+        If false, buttons (add rule, etc.) will be shown only on hover
+        Default: true
     key: str or None
         An optional key that uniquely identifies this component. If this is
         None, and the component's arguments are changed, the component will
@@ -109,6 +113,7 @@ def condition_tree(config: dict,
         key='_' + key if key else None,
         min_height=min_height,
         placeholder=placeholder,
+        always_show_buttons=always_show_buttons,
         default=['', '']
     )
 

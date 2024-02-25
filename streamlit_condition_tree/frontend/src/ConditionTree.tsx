@@ -146,7 +146,8 @@ class ConditionTree extends StreamlitComponentBase<State> {
 
     private renderBuilder = (props: BuilderProps) => (
         <div className="query-builder-container">
-            <div className="query-builder qb-lite">
+            <div className={'query-builder '+
+            (this.props.args['always_show_buttons'] ? '':'qb-lite')}>
                 <Builder {...props} />
             </div>
         </div>
