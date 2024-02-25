@@ -1,26 +1,24 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
+import pandas as pd
+
 from streamlit_condition_tree import condition_tree, config_from_dataframe
 
-df = pd.read_csv(
-    'https://drive.google.com/uc?id=1phaHg9objxK2MwaZmSUZAKQ8kVqlgng4&export=download',
-    index_col=0,
-    parse_dates=['Date of birth'],
-    date_format='%Y-%m-%d')
-df['Age'] = ((pd.Timestamp.today() - df['Date of birth']).dt.days / 365).astype(int)
-df['Sex'] = pd.Categorical(df['Sex'])
-df['Likes tomatoes'] = np.random.randint(2, size=df.shape[0]).astype(bool)
+# Initial dataframe
+df = pd.DataFrame({
+    'First Name': ['Georges', 'Alfred'],
+    'Age': [45, 98],
+    'Favorite Color': ['Green', 'Red'],
+    'Like Tomatoes': [True, False]
+})
 
-st.dataframe(df)
-
+# Basic field configuration from dataframe
 config = config_from_dataframe(df)
 
-return_val = condition_tree(
+# Condition tree
+query_string = condition_tree(
     config,
+    always_show_buttons=True
 )
 
-st.code(return_val)
-
-df = df.query(return_val)
-st.dataframe(df)
+# Filtered dataframe
+df = df.query(query_string)
