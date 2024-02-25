@@ -55,8 +55,6 @@ class ConditionTree extends StreamlitComponentBase<State> {
     public constructor(props: ComponentProps) {
         super(props);
 
-        console.log(AntdConfig)
-
         const config: Config = {
             ...defaultConfig,
             ...props.args['config']
@@ -116,6 +114,14 @@ class ConditionTree extends StreamlitComponentBase<State> {
             .querySelectorAll('.rule_group>.group--children:has(> :nth-child(1):last-child)')
             .forEach((x) => x.classList.add('single-child'))
 
+        this.setHeight()
+    }
+
+    componentDidMount = () => {
+        this.setHeight()
+    }
+
+    private setHeight = () => {
         // Set frame height
         const height = Math.max(
             document.body.scrollHeight + 20,
