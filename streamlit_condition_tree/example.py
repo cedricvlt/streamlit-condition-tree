@@ -4,7 +4,7 @@ import streamlit as st
 from streamlit_condition_tree import condition_tree, config_from_dataframe
 
 df = pd.read_csv(
-    'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/people/people-100.csv',
+    'https://drive.google.com/uc?id=1phaHg9objxK2MwaZmSUZAKQ8kVqlgng4&export=download',
     index_col=0,
     parse_dates=['Date of birth'],
     date_format='%Y-%m-%d')
