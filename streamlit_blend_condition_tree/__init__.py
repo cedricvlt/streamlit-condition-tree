@@ -2,7 +2,7 @@ import os
 import streamlit.components.v1 as components
 import streamlit as st
 
-_RELEASE = False
+_RELEASE = True
 
 if not _RELEASE:
     _component_func = components.declare_component(
