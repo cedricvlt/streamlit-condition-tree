@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {ComponentProps, Streamlit, StreamlitComponentBase, withStreamlitConnection} from "streamlit-component-lib"
 import React, {ReactNode} from "react"
 
@@ -55,9 +56,18 @@ class ConditionTree extends StreamlitComponentBase<State> {
     public constructor(props: ComponentProps) {
         super(props);
 
-        const config: Config = {
+        const config = {
             ...defaultConfig,
-            ...props.args['config']
+            fields: _.merge(
+                {},
+                defaultConfig.fields,
+                props.args['config'].fields
+            ),
+            settings: _.merge(
+                {},
+                defaultConfig.fields,
+                props.args['config'].fields
+            )
         };
 
         // Load input tree

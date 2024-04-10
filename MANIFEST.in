@@ -1,1 +1,1 @@
-recursive-include streamlit_condition_tree/frontend/build *
+recursive-include streamlit_blend_condition_tree/frontend/build *

@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from streamlit_condition_tree import condition_tree, config_from_dataframe
+from streamlit_blend_condition_tree import condition_tree, config_from_dataframe
 
 # Initial dataframe
 df = pd.DataFrame({
