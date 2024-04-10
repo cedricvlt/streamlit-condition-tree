@@ -7,12 +7,6 @@ This component allows users to build complex condition trees that can be used to
 
 <img src="preview.jpg" width="500" alt="preview">
 
-
-## Install
-
-`pip install streamlit-condition-tree`
-
-
 ## Features
 - Highly configurable
 - Fields can be of type:
@@ -37,14 +31,14 @@ This component allows users to build complex condition trees that can be used to
 
 ```python
 import pandas as pd
-from streamlit_condition_tree import condition_tree, config_from_dataframe
+from streamlit_blend_condition_tree import condition_tree, config_from_dataframe
 
 # Initial dataframe
 df = pd.DataFrame({
-    'First Name': ['Georges', 'Alfred'],
-    'Age': [45, 98],
-    'Favorite Color': ['Green', 'Red'],
-    'Like Tomatoes': [True, False]
+  'First Name': ['Georges', 'Alfred'],
+  'Age': [45, 98],
+  'Favorite Color': ['Green', 'Red'],
+  'Like Tomatoes': [True, False]
 })
 
 # Basic field configuration from dataframe
@@ -61,33 +55,33 @@ df = df.query(query_string)
 
 ```python
 import streamlit as st
-from streamlit_condition_tree import condition_tree
+from streamlit_blend_condition_tree import condition_tree
 
 # Build a custom configuration
 config = {
-    'fields': {
-        'name': {
-            'label': 'Name',
-            'type': 'text',
-        },
-        'qty': {
-            'label': 'Age',
-            'type': 'number',
-            'fieldSettings': {
-                'min': 0
-            },
-        },
-        'like_tomatoes': {
-            'label': 'Likes tomatoes',
-            'type': 'boolean',
-        }
+  'fields': {
+    'name': {
+      'label': 'Name',
+      'type': 'text',
+    },
+    'qty': {
+      'label': 'Age',
+      'type': 'number',
+      'fieldSettings': {
+        'min': 0
+      },
+    },
+    'like_tomatoes': {
+      'label': 'Likes tomatoes',
+      'type': 'boolean',
     }
+  }
 }
 
 # Condition tree
 return_val = condition_tree(
-    config,
-    return_type='sql'
+  config,
+  return_type='sql'
 )
 
 # Generated SQL

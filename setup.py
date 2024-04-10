@@ -6,14 +6,14 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setuptools.setup(
-    name="streamlit-condition-tree",
+    name="streamlit-blend-condition-tree",
     version="0.1.3",
-    author="Cédric Villette",
-    author_email="cedric_villette@hotmail.fr",
-    description="Condition Tree Builder for Streamlit",
+    author="Santiago Mancini",
+    author_email="Santiago.Mancini@blend360.com",
+    description="Streamlit component for the Blend Condition Tree",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/cedricvlt/streamlit-condition-tree",
+    url="https://github.com/BLEND360/streamlit-blend-condition-tree",
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=[],
@@ -28,10 +28,11 @@ setuptools.setup(
         "devel": [
             "wheel",
             "pytest==7.4.0",
-            "playwright==1.36.0",
+            "playwright==1.39.0",
             "requests==2.31.0",
             "pytest-playwright-snapshot==1.0",
             "pytest-rerunfailures==12.0",
         ]
     }
 )
+
