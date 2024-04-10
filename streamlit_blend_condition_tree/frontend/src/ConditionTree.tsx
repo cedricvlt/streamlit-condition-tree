@@ -65,8 +65,8 @@ class ConditionTree extends StreamlitComponentBase<State> {
             ),
             settings: _.merge(
                 {},
-                defaultConfig.fields,
-                props.args['config'].fields
+                defaultConfig.settings,
+                props.args['config'].settings
             )
         };
 

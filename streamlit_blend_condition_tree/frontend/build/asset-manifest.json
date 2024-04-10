@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.a9b9d8e0.css",
-    "main.js": "./static/js/main.d600711c.js",
+    "main.js": "./static/js/main.faebe440.js",
     "static/media/source-sans-pro-latin-ext-400-normal.woff": "./static/media/source-sans-pro-latin-ext-400-normal.185cedfb4e64a9a8801a.woff",
     "static/media/source-sans-pro-latin-ext-400-normal.woff2": "./static/media/source-sans-pro-latin-ext-400-normal.23e9c5217d09910f51ad.woff2",
     "static/media/source-sans-pro-latin-400-normal.woff": "./static/media/source-sans-pro-latin-400-normal.7a5ba508b998fd7044ed.woff",
@@ -18,10 +18,10 @@
     "static/media/source-sans-pro-cyrillic-ext-400-normal.woff2": "./static/media/source-sans-pro-cyrillic-ext-400-normal.de95c5209ef26bf69ccf.woff2",
     "index.html": "./index.html",
     "main.a9b9d8e0.css.map": "./static/css/main.a9b9d8e0.css.map",
-    "main.d600711c.js.map": "./static/js/main.d600711c.js.map"
+    "main.faebe440.js.map": "./static/js/main.faebe440.js.map"
   },
   "entrypoints": [
     "static/css/main.a9b9d8e0.css",
-    "static/js/main.d600711c.js"
+    "static/js/main.faebe440.js"
   ]
 }
