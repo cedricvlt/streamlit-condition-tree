@@ -26,8 +26,8 @@ This component allows users to build complex condition trees that can be used to
 - RHS can be:
   - values
   - another fields (of same type)
-  - functions (arguments also can be values/fields/funcs)
-- LHS can be field or function
+  - ~~functions (arguments also can be values/fields/funcs)~~ (not implemented yet)
+- LHS can be field ~~or function~~
 - Reordering (drag-n-drop) support for rules and groups of rules
 - Export to MongoDb, SQL, JsonLogic, SpEL or ElasticSearch
 
@@ -51,7 +51,11 @@ df = pd.DataFrame({
 config = config_from_dataframe(df)
 
 # Condition tree
-query_string = condition_tree(config)
+query_string = condition_tree(
+  config,
+  always_show_buttons=True,
+  placeholder="Empty condition tree"
+)
 
 # Filtered dataframe
 df = df.query(query_string)
