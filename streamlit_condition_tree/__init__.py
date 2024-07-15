@@ -1,6 +1,8 @@
 import os
-import streamlit.components.v1 as components
+
 import streamlit as st
+import streamlit.components.v1 as components
+from streamlit.components.v1.custom_component import MarshallComponentException
 
 _RELEASE = False
 
@@ -13,7 +15,6 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
     _component_func = components.declare_component("streamlit_condition_tree", path=build_dir)
-
 
 type_mapper = {
     'b': 'boolean',
@@ -28,6 +29,54 @@ type_mapper = {
     'U': 'text',
     'V': ''
 }
+
+
+# stole from https://github.com/andfanilo/streamlit-echarts/blob/master/streamlit_echarts/frontend/src/utils.js
+# Thanks andfanilo
+class JsCode:
+    def __init__(self, js_code: str):
+        """Wrapper around a js function to be injected on gridOptions.
+        code is not checked at all.
+        set allow_unsafe_jscode=True on AgGrid call to use it.
+        Code is rebuilt on client using new Function Syntax (https://javascript.info/new-function)
+
+        Args:
+            js_code (str): javascript function code as str
+        """
+        import re
+        match_js_comment_expression = r"\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$"
+        js_code = re.sub(re.compile(match_js_comment_expression, re.MULTILINE), r"\1", js_code)
+
+        match_js_spaces = r"\s+(?=(?:[^\'\"]*[\'\"][^\'\"]*[\'\"])*[^\'\"]*$)"
+        one_line_jscode = re.sub(match_js_spaces, " ", js_code, flags=re.MULTILINE)
+
+        js_placeholder = "::JSCODE::"
+        one_line_jscode = re.sub(r"\s+|\r\s*|\n+", " ", js_code, flags=re.MULTILINE)
+
+        self.js_code = f"{js_placeholder}{one_line_jscode}{js_placeholder}"
+
+
+# Stole from https://github.com/PablocFonseca/streamlit-aggrid/blob/main/st_aggrid/shared.py
+# Thanks PablocFonseca
+def walk_config(config, func):
+    """Recursively walk config applying func at each leaf node
+
+    Args:
+        config (dict): config dictionary
+        func (callable): a function to apply at leaf nodes
+    """
+    from collections.abc import Mapping
+
+    if isinstance(config, (Mapping, list)):
+        for i, k in enumerate(config):
+
+            if isinstance(config[k], Mapping):
+                walk_config(config[k], func)
+            elif isinstance(config[k], list):
+                for j in config[k]:
+                    walk_config(j, func)
+            else:
+                config[k] = func(config[k])
 
 
 def config_from_dataframe(dataframe):
@@ -58,7 +107,8 @@ def condition_tree(config: dict,
                    min_height: int = 400,
                    placeholder: str = '',
                    always_show_buttons: bool = False,
-                   key: str = None):
+                   key: str = None,
+                   allow_unsafe_jscode: bool = False, ):
     """Create a new instance of condition_tree.
 
     Parameters
@@ -88,6 +138,9 @@ def condition_tree(config: dict,
         None, and the component's arguments are changed, the component will
         be re-mounted in the Streamlit frontend and lose its current state.
         Can also be used to access the condition tree through st.session_state.
+    allow_unsafe_jscode: bool
+        Allows jsCode to be injected in gridOptions.
+        Defaults to False.
 
     Returns
     -------
@@ -97,7 +150,7 @@ def condition_tree(config: dict,
     """
 
     if return_type == 'queryString':
-        # Add backticks to fields with space in their name
+        # Add backticks to fields having spaces in their name
         fields = {}
         for field_name, field_config in config['fields'].items():
             if ' ' in field_name:
@@ -106,19 +159,31 @@ def condition_tree(config: dict,
 
         config['fields'] = fields
 
-    output_tree, component_value = _component_func(
-        config=config,
-        return_type=return_type,
-        tree=tree,
-        key='_' + key if key else None,
-        min_height=min_height,
-        placeholder=placeholder,
-        always_show_buttons=always_show_buttons,
-        default=['', '']
-    )
+    if allow_unsafe_jscode:
+        walk_config(config, lambda v: v.js_code if isinstance(v, JsCode) else v)
+
+    try:
+        output_tree, component_value = _component_func(
+            config=config,
+            return_type=return_type,
+            tree=tree,
+            key='_' + key if key else None,
+            min_height=min_height,
+            placeholder=placeholder,
+            always_show_buttons=always_show_buttons,
+            default=['', ''],
+            allow_unsafe_jscode=allow_unsafe_jscode,
+        )
+
+    except MarshallComponentException as e:
+        # Uses a more complete error message.
+        args = list(e.args)
+        args[0] += ". If you're using custom JsCode objects on config, ensure that allow_unsafe_jscode is True."
+        e = MarshallComponentException(*args)
+        raise (e)
 
     if return_type == 'queryString' and not component_value:
-        # Default string that returns all the values in DataFrame.query
+        # Default string that applies no filter in DataFrame.query
         component_value = 'index in index'
 
     st.session_state[key] = output_tree

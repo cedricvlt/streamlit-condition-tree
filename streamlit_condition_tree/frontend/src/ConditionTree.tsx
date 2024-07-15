@@ -1,14 +1,15 @@
 import {ComponentProps, Streamlit, StreamlitComponentBase, withStreamlitConnection} from "streamlit-component-lib"
 import React, {ReactNode} from "react"
+import _ from 'lodash'
 
 import type {BuilderProps, Config, ImmutableTree, JsonGroup, JsonTree} from '@react-awesome-query-builder/antd';
-import {AntdConfig, Builder, Query, Utils as QbUtils} from '@react-awesome-query-builder/antd';
+import {Builder, Query, Utils as QbUtils} from '@react-awesome-query-builder/antd';
 import {ConfigProvider, theme as antdTheme} from 'antd';
 import '@react-awesome-query-builder/antd/css/styles.css';
 import './style.css'
 import "@fontsource/source-sans-pro";
 import {defaultConfig} from './config'
-
+import {deepMap} from "./utils"
 
 interface State {
     tree: ImmutableTree,
@@ -50,15 +51,37 @@ const unformatTree = (tree: any) => {
     }
 };
 
+const parseJsCodeFromPython = (v: string) => {
+    const JS_PLACEHOLDER = "::JSCODE::"
+
+    let funcReg = new RegExp(
+        `${JS_PLACEHOLDER}\\s*((function|class)\\s*.*)\\s*${JS_PLACEHOLDER}`
+    )
+
+    let match = funcReg.exec(v)
+
+    if (match) {
+        const funcStr = match[1]
+        // eslint-disable-next-line
+        return new Function("return " + funcStr)()
+    } else {
+        return v
+    }
+}
+
 class ConditionTree extends StreamlitComponentBase<State> {
 
     public constructor(props: ComponentProps) {
         super(props);
 
-        const config: Config = {
-            ...defaultConfig,
-            ...props.args['config']
-        };
+        let userConfig = props.args['config'];
+        if (this.props.args.allow_unsafe_jscode) {
+            console.warn("flag allow_unsafe_jscode is on.")
+            userConfig = deepMap(userConfig, parseJsCodeFromPython)
+        }
+
+        const config: Config = _.merge({}, defaultConfig, userConfig);
+
 
         // Load input tree
         let tree: ImmutableTree = QbUtils.loadTree(defaultTree)
@@ -68,7 +91,7 @@ class ConditionTree extends StreamlitComponentBase<State> {
                 formatTree(input_tree)
                 tree = QbUtils.checkTree(QbUtils.loadTree(input_tree), config)
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
 
@@ -146,8 +169,8 @@ class ConditionTree extends StreamlitComponentBase<State> {
 
     private renderBuilder = (props: BuilderProps) => (
         <div className="query-builder-container">
-            <div className={'query-builder '+
-            (this.props.args['always_show_buttons'] ? '':'qb-lite')}>
+            <div className={'query-builder ' +
+                (this.props.args['always_show_buttons'] ? '' : 'qb-lite')}>
                 <Builder {...props} />
             </div>
         </div>
