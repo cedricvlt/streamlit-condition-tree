@@ -75,10 +75,7 @@ class ConditionTree extends StreamlitComponentBase<State> {
         super(props);
 
         let userConfig = props.args['config'];
-        if (this.props.args.allow_unsafe_jscode) {
-            console.warn("flag allow_unsafe_jscode is on.")
-            userConfig = deepMap(userConfig, parseJsCodeFromPython)
-        }
+        userConfig = deepMap(userConfig, parseJsCodeFromPython)
 
         const config: Config = _.merge({}, defaultConfig, userConfig);
 

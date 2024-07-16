@@ -2,7 +2,6 @@ import os
 
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit.components.v1.custom_component import MarshallComponentException
 
 _RELEASE = False
 
@@ -35,9 +34,8 @@ type_mapper = {
 # Thanks andfanilo
 class JsCode:
     def __init__(self, js_code: str):
-        """Wrapper around a js function to be injected on gridOptions.
-        code is not checked at all.
-        set allow_unsafe_jscode=True on AgGrid call to use it.
+        """Wrapper around a js function to be injected on config.
+        Code is not checked at all.
         Code is rebuilt on client using new Function Syntax (https://javascript.info/new-function)
 
         Args:
@@ -108,7 +106,7 @@ def condition_tree(config: dict,
                    placeholder: str = '',
                    always_show_buttons: bool = False,
                    key: str = None,
-                   allow_unsafe_jscode: bool = False, ):
+                   ):
     """Create a new instance of condition_tree.
 
     Parameters
@@ -138,9 +136,6 @@ def condition_tree(config: dict,
         None, and the component's arguments are changed, the component will
         be re-mounted in the Streamlit frontend and lose its current state.
         Can also be used to access the condition tree through st.session_state.
-    allow_unsafe_jscode: bool
-        Allows jsCode to be injected in gridOptions.
-        Defaults to False.
 
     Returns
     -------
@@ -159,28 +154,18 @@ def condition_tree(config: dict,
 
         config['fields'] = fields
 
-    if allow_unsafe_jscode:
-        walk_config(config, lambda v: v.js_code if isinstance(v, JsCode) else v)
+    walk_config(config, lambda v: v.js_code if isinstance(v, JsCode) else v)
 
-    try:
-        output_tree, component_value = _component_func(
-            config=config,
-            return_type=return_type,
-            tree=tree,
-            key='_' + key if key else None,
-            min_height=min_height,
-            placeholder=placeholder,
-            always_show_buttons=always_show_buttons,
-            default=['', ''],
-            allow_unsafe_jscode=allow_unsafe_jscode,
-        )
-
-    except MarshallComponentException as e:
-        # Uses a more complete error message.
-        args = list(e.args)
-        args[0] += ". If you're using custom JsCode objects on config, ensure that allow_unsafe_jscode is True."
-        e = MarshallComponentException(*args)
-        raise (e)
+    output_tree, component_value = _component_func(
+        config=config,
+        return_type=return_type,
+        tree=tree,
+        key='_' + key if key else None,
+        min_height=min_height,
+        placeholder=placeholder,
+        always_show_buttons=always_show_buttons,
+        default=['', ''],
+    )
 
     if return_type == 'queryString' and not component_value:
         # Default string that applies no filter in DataFrame.query
