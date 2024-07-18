@@ -79,7 +79,6 @@ class ConditionTree extends StreamlitComponentBase<State> {
 
         const config: Config = _.merge({}, defaultConfig, userConfig);
 
-
         // Load input tree
         let tree: ImmutableTree = QbUtils.loadTree(defaultTree)
         if (props.args['tree'] != null) {

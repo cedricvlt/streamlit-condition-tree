@@ -26,8 +26,8 @@ This component allows users to build complex condition trees that can be used to
 - RHS can be:
   - values
   - another fields (of same type)
-  - ~~functions (arguments also can be values/fields/funcs)~~ (not implemented yet)
-- LHS can be field ~~or function~~
+  - functions (arguments also can be values/fields/funcs)
+- LHS can be field or function
 - Reordering (drag-n-drop) support for rules and groups of rules
 - Export to MongoDb, SQL, JsonLogic, SpEL or ElasticSearch
 
@@ -74,7 +74,7 @@ config = {
             'label': 'Name',
             'type': 'text',
         },
-        'qty': {
+        'age': {
             'label': 'Age',
             'type': 'number',
             'fieldSettings': {
@@ -119,9 +119,8 @@ def condition_tree(
    
 A basic configuration can be built from a DataFrame with `config_from_dataframe`.  
 For a more advanced configuration, see the component [doc](https://github.com/ukrbublik/react-awesome-query-builder/blob/master/CONFIG.adoc)
-and [demo](https://ukrbublik.github.io/react-awesome-query-builder/).  
-  *Note*: Javascript functions (ex: validators) are not yet supported.
-
+and [demo](https://ukrbublik.github.io/react-awesome-query-builder/).
+Custom javascript functions must be wrapped into the JsCode class (see [Advanced config](https://condition-tree-demo.streamlit.app/Advanced_config))
 
 - **return_type**: Format of the returned value :
   - queryString
@@ -164,7 +163,3 @@ Can also be used to access the generated condition tree (see section below).
 
 When a key is defined for the component, the condition tree generated is accessible through `st.session_state[key]` as a dictionary.  
 It can be loaded as an input tree through the `tree` parameter.
-
-
-## Potential future improvements
-- **Javascript support**: allow injection of javascript code in the configuration (e.g. validators)
