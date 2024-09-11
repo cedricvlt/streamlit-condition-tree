@@ -13,7 +13,8 @@ import {deepMap} from "./utils"
 
 interface State {
     tree: ImmutableTree,
-    config: Config
+    config: Config,
+    expanded: boolean
 }
 
 const defaultTree: JsonGroup = {
@@ -71,6 +72,8 @@ const parseJsCodeFromPython = (v: string) => {
 
 class ConditionTree extends StreamlitComponentBase<State> {
 
+    private debouncedSetStreamlitValue: _.DebouncedFunc<(tree: ImmutableTree) => void>;
+
     public constructor(props: ComponentProps) {
         super(props);
 
@@ -91,8 +94,11 @@ class ConditionTree extends StreamlitComponentBase<State> {
             }
         }
 
-        this.state = {config, tree}
+        this.state = {config, tree, expanded: false}
         this.setStreamlitValue(tree)
+      
+        // Create a debounced version of setStreamlitValue
+        this.debouncedSetStreamlitValue = _.debounce(this.setStreamlitValue, 300);
     }
 
     public render = (): ReactNode => {
@@ -126,33 +132,42 @@ class ConditionTree extends StreamlitComponentBase<State> {
             </div>
         )
     }
-
-    componentDidUpdate = () => {
-        // Class to apply custom css on rule_groups with a single child
-        document
-            .querySelectorAll('.rule_group>.group--children:has(> :nth-child(1):last-child)')
-            .forEach((x) => x.classList.add('single-child'))
-
+    
+    componentDidMount = () => {
         this.setHeight()
     }
 
-    componentDidMount = () => {
-        this.setHeight()
+    componentDidUpdate = () => {
+        // ... (existing code for CSS class)
+    
+        // Check if the tree has changed
+        const currentTree = QbUtils.getTree(this.state.tree)
+        const isEmpty = !currentTree.children1 || !currentTree.children1.length
+    
+        if (!isEmpty && !this.state.expanded) {
+            this.setState({ expanded: true }, this.setHeight)
+        } else {
+            this.setHeight()
+        }
+    }
+
+    componentWillUnmount = () => {
+        this.debouncedSetStreamlitValue.cancel();
     }
 
     private setHeight = () => {
         // Set frame height
         const height = Math.max(
             document.body.scrollHeight + 20,
-            this.props.args['min_height']
+            this.state.expanded ? this.props.args['min_height'] : 100
         );
         Streamlit.setFrameHeight(height);
     }
 
     private onChange = (immutableTree: ImmutableTree) => {
         this.setState({tree: immutableTree})
-        this.setStreamlitValue(immutableTree)
-    }
+        this.debouncedSetStreamlitValue(immutableTree)
+  }
 
     private setStreamlitValue = (tree: ImmutableTree) => {
         const exportFunc = exportFunctions[this.props.args['return_type']]
