@@ -159,7 +159,7 @@ class ConditionTree extends StreamlitComponentBase<State> {
         // Set frame height
         const height = Math.max(
             document.body.scrollHeight + 20,
-            this.state.expanded ? this.props.args['min_height'] : 100
+            this.state.expanded ? this.props.args['min_height'] : 150
         );
         Streamlit.setFrameHeight(height);
     }
