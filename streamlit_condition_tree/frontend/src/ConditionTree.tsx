@@ -138,7 +138,10 @@ class ConditionTree extends StreamlitComponentBase<State> {
     }
 
     componentDidUpdate = () => {
-        // ... (existing code for CSS class)
+        // Class to apply custom css on rule_groups with a single child
+        document
+            .querySelectorAll('.rule_group>.group--children:has(> :nth-child(1):last-child)')
+            .forEach((x) => x.classList.add('single-child'))
     
         // Check if the tree has changed
         const currentTree = QbUtils.getTree(this.state.tree)
