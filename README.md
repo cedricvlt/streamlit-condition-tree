@@ -150,7 +150,7 @@ Custom javascript functions must be wrapped into the JsCode class (see [Advanced
 
 - **always_show_buttons**: Show buttons (create rule, etc.) even when they are not hovered
 
-  Default: False
+  Default: True
 
 
 - **key**: Fixed identity if you want to change its arguments over time and not have it be re-created.  

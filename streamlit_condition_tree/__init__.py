@@ -104,7 +104,7 @@ def condition_tree(config: dict,
                    tree: dict = None,
                    min_height: int = 400,
                    placeholder: str = '',
-                   always_show_buttons: bool = False,
+                   always_show_buttons: bool = True,
                    key: str = None,
                    ):
     """Create a new instance of condition_tree.
@@ -128,7 +128,7 @@ def condition_tree(config: dict,
     placeholder: str
         Text displayed when the condition tree is empty
         Default: empty
-    always_show_buttons: false
+    always_show_buttons: boolean
         If false, buttons (add rule, etc.) will be shown only on hover
         Default: true
     key: str or None
